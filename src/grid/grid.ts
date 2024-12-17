@@ -34,13 +34,13 @@ export class Grid<T extends object> {
   public attachTo(element: HTMLElement) {
     element.replaceChildren();
 
-    element.attachShadow({ mode: 'open' });
+    // element.attachShadow({ mode: 'open' });
 
-    if (!element.shadowRoot) {
-      throw new Error('Shadow root not created');
-    }
+    // if (!element.shadowRoot) {
+    //   throw new Error('Shadow root not created');
+    // }
 
-    this._core = new GridCore(element.shadowRoot, this.internals);
+    this._core = new GridCore(element, this.internals);
     this._core.render();
   }
 }

@@ -3,13 +3,15 @@ import { OneOf } from '../../types/one-of';
 export type HtmlElementArgs = {
   class?: string | string[];
   data?: Record<string, string>;
-} & OneOf<
-  {
-    text?: string;
-  },
-  {
-    children?: HTMLElement[];
-  }
+} & Partial<
+  OneOf<
+    {
+      text?: string;
+    },
+    {
+      children?: HTMLElement[];
+    }
+  >
 >;
 
 export function applyHtmlElementDefaults(args: HtmlElementArgs | undefined, el: HTMLElement) {

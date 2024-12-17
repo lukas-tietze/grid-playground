@@ -1,0 +1,20 @@
+$border: 1px solid silver;
+$cell-padding-x: 10px;
+$cell-padding-y: 5px;
+$cell-padding: $cell-padding-x $cell-padding-x;
+$row-height: 30px;
+$row-line-height: $row-height - $cell-padding-y;
+
+table.til-grid {
+  border-collapse: collapse;
+  border: $border;
+
+  tr.til-grid-header {
+    > th {
+      border: $border;
+      padding: $cell-padding;
+      height: $row-height;
+      line-height: $row-line-height;
+    }
+  }
+}

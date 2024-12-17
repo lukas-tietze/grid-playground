@@ -42,6 +42,7 @@ export class GridHeader<T extends object> extends GridComponent<T> {
       children: [
         tr({
           children: this.headerCells.map(({ element }) => element),
+          class: 'til-grid-header',
         }),
       ],
     });

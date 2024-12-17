@@ -1,4 +1,4 @@
-export type OneOf<T1, T2> = {
+export type OneOf<T1 extends object, T2 extends object> = {
   [K in keyof T1 & keyof T2]: T1[K] | T2[K];
 } & (
   | ({
@@ -13,4 +13,4 @@ export type OneOf<T1, T2> = {
     })
 );
 
-export type OneOf3<T1, T2, T3> = OneOf<OneOf<T1, T2>, T3>;
+export type OneOf3<T1 extends object, T2 extends object, T3 extends object> = OneOf<OneOf<T1, T2>, T3>;
