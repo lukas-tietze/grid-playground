@@ -12,13 +12,14 @@ export class Grid<T extends object> {
 
   private _core: GridCore<T> | undefined;
 
-  private internals: GridInternals<T>;
+  private _internals: GridInternals<T>;
 
   constructor(options: GridOptions<T>, data: DataManager<T>) {
     this._options = options;
     this._dataManager = data;
-    this.internals = {
+    this._internals = {
       options: normalizeGridOptions(options),
+      data: this._dataManager,
       root: this,
     };
   }
@@ -40,7 +41,7 @@ export class Grid<T extends object> {
     //   throw new Error('Shadow root not created');
     // }
 
-    this._core = new GridCore(element, this.internals);
+    this._core = new GridCore(element, this._internals);
     this._core.render();
   }
 }

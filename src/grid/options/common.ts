@@ -5,12 +5,12 @@ export type FormatterFunctionContext<TRow extends object> = {
 
 export type HeaderRendererContext = {
   field?: string;
-  dataType: DataType;
+  dataType: DataTypeNames;
 };
 
 export type CellValueRendererContext<TRow extends object> = {
   field?: string;
-  dataType: DataType;
+  dataType: DataTypeNames;
   row: TRow;
 };
 
@@ -24,9 +24,9 @@ export type CellValueRenderer<TRow extends object, TCell> = (
 export type CompareFunction<T> = (a: T, b: T) => number;
 
 export type DefaultSupportedDataTypes = string | number | boolean | Date;
-export type DataType = 'string' | 'number' | 'boolean' | 'date' | 'other';
+export type DataTypeNames = 'string' | 'number' | 'boolean' | 'date' | 'other';
 
-export type ColumnDataType<TCell> = TCell extends string
+export type InferDataTypeName<TCell> = TCell extends string
   ? 'string'
   : TCell extends number
   ? 'number'

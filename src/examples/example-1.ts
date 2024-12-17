@@ -1,6 +1,7 @@
 import { DataManager } from '../grid/data-manager';
 import { Grid } from '../grid/grid';
 import { GridOptions } from '../grid/options';
+import { faker } from '@faker-js/faker';
 
 class DataSource {
   constructor(copy?: Partial<DataSource>) {
@@ -29,23 +30,14 @@ const options: GridOptions<DataSource> = {
   ],
 };
 
-const data: DataSource[] = [
-  new DataSource({
-    id: 0,
-    age: 30,
-    name: 'John Doe',
-  }),
-  new DataSource({
-    id: 1,
-    age: 25,
-    name: 'Jane Doe',
-  }),
-  new DataSource({
-    id: 2,
-    age: 35,
-    name: 'John Smith',
-  }),
-];
+const data: DataSource[] = new Array(10_000).fill(0).map(
+  (_, i) =>
+    new DataSource({
+      id: i,
+      age: faker.number.int({ min: 18, max: 70 }),
+      name: faker.person.fullName(),
+    })
+);
 
 export function renderExample1(root: HTMLElement | null | undefined) {
   if (!root) {

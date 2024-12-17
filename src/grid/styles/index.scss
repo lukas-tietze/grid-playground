@@ -5,12 +5,34 @@ $cell-padding: $cell-padding-x $cell-padding-x;
 $row-height: 30px;
 $row-line-height: $row-height - $cell-padding-y;
 
+$bg-color: white;
+$bg-color-hover: wheat;
+$fg-color: black;
+$fg-color-hover: black;
+
 table.til-grid {
   border-collapse: collapse;
   border: $border;
 
-  tr.til-grid-header {
+  tr.til-grid-header-row {
     > th {
+      border: $border;
+      padding: $cell-padding;
+      height: $row-height;
+      line-height: $row-line-height;
+    }
+  }
+
+  tr.til-grid-content-row {
+    &:hover > td.til-grid-cell {
+      background-color: $bg-color-hover;
+      color: $fg-color-hover;
+    }
+
+    > td.til-grid-cell {
+      background-color: $bg-color;
+      color: $fg-color;
+
       border: $border;
       padding: $cell-padding;
       height: $row-height;

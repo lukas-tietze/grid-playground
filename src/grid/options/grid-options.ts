@@ -4,15 +4,16 @@ import { OneOf, OneOf3 } from '../../types/one-of';
 import { CellValueRenderer, CompareFunction, FormatterFunction, HeaderRenderer } from './common';
 import { ExplicitOptionals } from '../../types/explicit-optionals';
 
-export type ColumnHeaderOptions = { name: string | Observable<string> | Promise<string>; renderer?: HeaderRenderer };
+export type ColumnValueComparer<TCell> = { comparer?: CompareFunction<TCell> };
+
+export type ColumnHeaderOptions = { name: string | Observable<string> | Promise<string>; headerRenderer?: HeaderRenderer };
 
 export type ColumnValueFormatter<TRow extends object, TCell> = { formatter?: FormatterFunction<TRow, TCell> };
 export type ColumnValueStaticFormatter = { format?: string };
 export type ColumnValueRenderer<TRow extends object, TCell> = { renderer?: CellValueRenderer<TRow, TCell> };
-export type ColumnValueComparer<TCell> = { comparer?: CompareFunction<TCell> };
 
 export type ColumnValueCommon<TRow extends object, TCell> = ExplicitOptionals<
-  OneOf3<ColumnValueFormatter<TRow, TCell>, ColumnValueRenderer<TRow, TCell>, ColumnValueStaticFormatter>
+  OneOf3<ColumnValueFormatter<TRow, TCell>, ColumnValueStaticFormatter, ColumnValueRenderer<TRow, TCell>>
 >;
 
 export type FieldValue<TRow extends object, TKey extends keyof TRow = keyof TRow> = {
