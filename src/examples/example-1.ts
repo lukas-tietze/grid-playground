@@ -3,6 +3,7 @@ import { Grid } from '../grid/grid';
 import { GridOptions } from '../grid/options';
 import { faker } from '@faker-js/faker';
 import { OneOf } from '../types/one-of';
+import { FlatDataManager } from '../grid/data/flat-data-manager';
 
 class DataSource {
   constructor(copy?: Partial<DataSource>) {
@@ -45,11 +46,8 @@ export function renderExample1(root: HTMLElement | null | undefined) {
     throw new Error('Root element not found');
   }
 
-  const dm = new DataManager<DataSource>();
-
-  dm.data = data;
-
-  const grid = new Grid(options, dm);
+  const grid = new Grid(options);
 
   grid.attachTo(root);
+  grid.setData(data);
 }

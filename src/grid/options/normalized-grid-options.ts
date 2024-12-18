@@ -8,9 +8,9 @@ export type NormalizedColumnOptions<TRow extends object> = {
   headerText$: Observable<string>;
   headerRenderer: HeaderRenderer;
   dataType: DataTypeNames;
-  valueAccessor: ColumnValueAccessor<TRow, unknown>;
-  valueRenderer: CellValueRenderer<TRow, unknown>;
-  comparer: CompareFunction<unknown>;
+  valueAccessor: ColumnValueAccessor<TRow, any>;
+  valueRenderer: CellValueRenderer<TRow, any>;
+  comparer: CompareFunction<any>;
 };
 
 export type NormalizedGridOptions<TRow extends object> = {

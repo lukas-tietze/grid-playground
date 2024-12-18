@@ -1,6 +1,6 @@
 import { from, Observable, of } from 'rxjs';
 
-import { ColumnOptions, ColumnValueCommon, GridOptions } from './grid-options';
+import { ColumnOptions, GridOptions } from './grid-options';
 import { NormalizedColumnOptions, NormalizedGridOptions } from './normalized-grid-options';
 import { HeaderRenderer } from './common';
 import { isPromise } from 'rxjs/internal/util/isPromise';
@@ -33,27 +33,27 @@ function normalizeColumnOptions<T extends object>(column: ColumnOptions<T>, inde
   };
 }
 
-function makeComparer<T>(column: ColumnOptions<T>): NormalizedColumnOptions<T>['comparer'] {
-  return column.comparer;
+function makeComparer<T extends object>(column: ColumnOptions<T>): NormalizedColumnOptions<T>['comparer'] {
+  if (column.comparer) {
+    return column.comparer;
+  }
+
+  return (a, b) => String(a).localeCompare(String(b));
 }
 
-function makeValueRenderer<T extends object>(column: ColumnValueCommon<T, any>): NormalizedColumnOptions<T>['valueRenderer'] {
-  if (column.format) {
-    return () => {
-      throw new Error('not implemented');
-    };
-  }
-
-  if (column.formatter) {
-    const formatter = column.formatter;
-
-    return (element, value, context) => (element.innerText = formatter(value, { columnIndex: 0, row: context.row }));
-  }
-
-  if (column.renderer) {
-    return column.renderer;
-  }
-
+function makeValueRenderer<T extends object>(column: ColumnOptions<T>): NormalizedColumnOptions<T>['valueRenderer'] {
+  // if (column.format) {
+  //   return () => {
+  //     throw new Error('not implemented');
+  //   };
+  // }
+  // if (column.formatter) {
+  //   const formatter = column.formatter;
+  //   return (element, value, context) => (element.innerText = formatter(value, { columnIndex: 0, row: context.row }));
+  // }
+  // if (column.renderer) {
+  //   return column.renderer;
+  // }
   return (element, value) => (element.innerText = String(value));
 }
 
@@ -69,4 +69,4 @@ function createHeaderRenderer<T extends object>(column: ColumnOptions<T>): Norma
   return column.headerRenderer ?? defaultHeaderRenderer;
 }
 
-const defaultHeaderRenderer: HeaderRenderer = (element: HTMLTableCellElement, text: string) => (element.innerText = text);
+const defaultHeaderRenderer: HeaderRenderer = (element: HTMLElement, text: string) => (element.innerText = text);

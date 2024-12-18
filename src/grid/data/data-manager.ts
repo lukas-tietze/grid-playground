@@ -1,17 +1,12 @@
 import { Observable, Subject } from 'rxjs';
 import { Query } from './query';
-import { GridInternals } from '../grid-internals';
 
 export abstract class DataManager<T extends object> {
   private _beginLoad$ = new Subject<void>();
 
   private _endLoad$ = new Subject<void>();
 
-  constructor(internals: GridInternals<T>) {
-    this.internals = internals;
-  }
-
-  public abstract getData(query: Query): Promise<T[]>;
+  public abstract handleChangedQuery(query: Query): void;
 
   public get beginLoad$(): Observable<void> {
     return this._beginLoad$;
@@ -21,6 +16,8 @@ export abstract class DataManager<T extends object> {
     return this._endLoad$;
   }
 
+  public abstract get data$(): Observable<T[]>;
+
   protected onBeginLoad() {
     this._beginLoad$.next();
   }
@@ -28,6 +25,4 @@ export abstract class DataManager<T extends object> {
   protected onEndLoad() {
     this._endLoad$.next();
   }
-
-  protected readonly internals: Readonly<GridInternals<T>>;
 }

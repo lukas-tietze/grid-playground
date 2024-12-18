@@ -1,5 +1,5 @@
 import { GridComponent } from '../grid-component';
-import { GridInternals } from '../grid-internals';
+import { GridState } from '../grid-data';
 import { table } from '../util/html-elements';
 import { GridContent } from './grid-content';
 import { GridFlatContent } from './grid-flat-content';
@@ -13,7 +13,7 @@ export class GridCore<T extends object> extends GridComponent<T> {
 
   private element?: HTMLTableElement;
 
-  constructor(root: ShadowRoot | HTMLElement, internals: GridInternals<T>) {
+  constructor(root: ShadowRoot | HTMLElement, internals: GridState<T>) {
     super(internals);
 
     this._root = root;

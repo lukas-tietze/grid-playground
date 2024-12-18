@@ -1,8 +1,8 @@
 import { GridComponent } from '../grid-component';
-import { GridInternals } from '../grid-internals';
+import { GridState } from '../grid-data';
 
 export abstract class GridContent<T extends object> extends GridComponent<T> {
-  constructor(internals: GridInternals<T>) {
+  constructor(internals: GridState<T>) {
     super(internals);
   }
 

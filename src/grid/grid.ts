@@ -1,26 +1,29 @@
 import './styles/index.scss';
 
 import { GridCore } from './components/grid-core';
-import { DataManager } from './data/data-manager';
 import { GridOptions, normalizeGridOptions } from './options';
-import { GridInternals } from './grid-internals';
+import { GridState } from './grid-data';
+import { QueryManager } from './querying/query-manager';
+import { Observable } from 'rxjs';
+import { FlatDataManager } from './data/flat-data-manager';
 
 export class Grid<T extends object> {
   private _options: GridOptions<T>;
 
-  private _dataManager: DataManager<T>;
-
   private _core: GridCore<T> | undefined;
 
-  private _internals: GridInternals<T>;
+  private _internals: GridState<T>;
 
-  constructor(options: GridOptions<T>, data: DataManager<T>) {
+  constructor(options: GridOptions<T>) {
     this._options = options;
-    this._dataManager = data;
+
+    const normalizedOptions = normalizeGridOptions(options);
+
     this._internals = {
-      options: normalizeGridOptions(options),
-      data: this._dataManager,
+      options: normalizedOptions,
+      dataManager: new FlatDataManager(normalizedOptions),
       root: this,
+      query: new QueryManager(),
     };
   }
 
@@ -28,8 +31,12 @@ export class Grid<T extends object> {
     return this._options;
   }
 
-  public get dataManager(): DataManager<T> {
-    return this._dataManager;
+  public setData(data: T[] | Observable<T[]> | Promise<T[]>) {
+    if (this._internals.dataManager instanceof FlatDataManager) {
+      this._internals.dataManager.src = data;
+    } else {
+      throw new Error('not implemented.');
+    }
   }
 
   public attachTo(element: HTMLElement) {

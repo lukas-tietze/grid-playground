@@ -1,7 +1,7 @@
 import { Observable, Subscription } from 'rxjs';
 import { GridComponent } from '../grid-component';
 import { th, thead, tr } from '../util/html-elements';
-import { GridInternals } from '../grid-internals';
+import { GridState } from '../grid-data';
 import { HeaderRenderer } from '../options';
 
 type HeaderCell = {
@@ -14,7 +14,7 @@ export class GridHeader<T extends object> extends GridComponent<T> {
 
   private headerCells: HeaderCell[] = [];
 
-  constructor(internals: GridInternals<T>) {
+  constructor(internals: GridState<T>) {
     super(internals);
   }
 

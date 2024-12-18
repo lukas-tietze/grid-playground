@@ -1,33 +1,51 @@
-import { BehaviorSubject } from 'rxjs';
 import { DataManager } from './data-manager';
 import { Pagination, Query } from './query';
 import { Filter, Ordering } from './query';
 import { StopWatch } from '../util';
-import { GridInternals } from '../grid-internals';
+import { NormalizedGridOptions } from '../options';
+import { BehaviorSubject, from, map, Observable, of, switchMap, withLatestFrom } from 'rxjs';
+
+type DataSource<T> = T[] | Observable<T[]> | Promise<T[]>;
 
 export class FlatDataManager<T extends object> extends DataManager<T> {
-  constructor(internals: GridInternals<T>) {
-    super(internals);
+  private _src$ = new BehaviorSubject<DataSource<T>>([]);
+
+  private _query$ = new BehaviorSubject<Query>({
+    filters: [],
+    ordering: [],
+    pagination: undefined,
+  });
+
+  constructor(private options: NormalizedGridOptions<T>) {
+    super();
   }
 
-  public data: T[] = [];
+  public get src(): DataSource<T> {
+    return this._src$.getValue();
+  }
 
-  public override getData(query: Query): Promise<T[]> {
-    this.onBeginLoad();
+  public set src(src: DataSource<T>) {
+    this._src$.next(src);
+  }
 
-    const sw = new StopWatch('ordering and sorting grid');
+  public readonly data$: Observable<T[]> = this._src$.pipe(
+    switchMap((src) => (Array.isArray(src) ? of(src) : from(src))),
+    withLatestFrom(this._query$),
+    map(([data, query]) => {
+      const sw = new StopWatch('ordering and sorting grid');
 
-    let data = this.data;
+      data = this.filterData(data, query.filters);
+      data = this.orderData(data, query.ordering);
+      data = this.applyPagination(data, query.pagination);
 
-    data = this.filterData(data, query.filters);
-    data = this.orderData(data, query.ordering);
-    data = this.applyPagination(data, query.pagination);
+      sw.report();
 
-    sw.report();
+      return data;
+    })
+  );
 
-    this.onEndLoad();
-
-    return Promise.resolve(data);
+  public override handleChangedQuery(query: Query): void {
+    this._query$.next(query);
   }
 
   private applyPagination(data: T[], pagination: Pagination | undefined): T[] {
@@ -37,7 +55,7 @@ export class FlatDataManager<T extends object> extends DataManager<T> {
   private filterData(data: T[], filters: Filter[]): T[] {
     return data.filter((v) => {
       for (const filter of filters) {
-        const col = this.internals.options.columnsById.get(filter.columnId);
+        const col = this.options.columnsById.get(filter.columnId);
 
         if (!col) {
           throw new Error();
@@ -66,7 +84,7 @@ export class FlatDataManager<T extends object> extends DataManager<T> {
       let res = 0;
 
       for (const ordering of orderings) {
-        const col = this.internals.options.columnsById.get(ordering.columnId);
+        const col = this.options.columnsById.get(ordering.columnId);
 
         if (!col) {
           throw new Error();

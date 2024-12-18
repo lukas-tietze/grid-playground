@@ -1,12 +1,11 @@
 import { Grid } from './grid';
 import { NormalizedGridOptions } from './options';
 import { DataManager } from './data/data-manager';
-import { Observable } from 'rxjs';
-import { Query } from './data/query';
+import { QueryManager } from './querying/query-manager';
 
-export type GridInternals<T extends object> = {
+export type GridState<T extends object> = {
   options: NormalizedGridOptions<T>;
-  data: DataManager<T>;
+  dataManager: DataManager<T>;
   root: Grid<T>;
-  query$: Observable<Query>;
+  query: QueryManager;
 };

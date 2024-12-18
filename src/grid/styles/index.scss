@@ -1,4 +1,6 @@
-$border: 1px solid silver;
+$border-color: silver;
+
+$border: 1px solid $border-color;
 $cell-padding-x: 10px;
 $cell-padding-y: 5px;
 $cell-padding: $cell-padding-x $cell-padding-x;
@@ -15,6 +17,11 @@ table.til-grid {
   border: $border;
 
   tr.til-grid-header-row {
+    position: sticky;
+    top: 0;
+    box-shadow: $border-color 0px 3px 3px 0px;
+    background: white;
+
     > th {
       text-align: left;
 

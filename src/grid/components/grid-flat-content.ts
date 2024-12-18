@@ -1,5 +1,5 @@
 import { takeUntil } from 'rxjs';
-import { GridInternals } from '../grid-internals';
+import { GridState } from '../grid-data';
 import { tbody, td, tr } from '../util/html-elements';
 import { GridContent } from './grid-content';
 import { StopWatch } from '../util';
@@ -7,7 +7,7 @@ import { StopWatch } from '../util';
 export class GridFlatContent<T extends object> extends GridContent<T> {
   private element?: HTMLTableSectionElement;
 
-  constructor(internals: GridInternals<T>) {
+  constructor(internals: GridState<T>) {
     super(internals);
   }
 
@@ -16,9 +16,7 @@ export class GridFlatContent<T extends object> extends GridContent<T> {
 
     root.appendChild(this.element);
 
-    this.internals.query$.pipe(
-      switchMap(),
-      takeUntil(this.destroy$)).subscribe((data) => this.renderRows(data));
+    this.internals.dataManager.data$.pipe(takeUntil(this.destroy$)).subscribe((data) => this.renderRows(data));
   }
 
   private renderRows(rows: T[]): void {
