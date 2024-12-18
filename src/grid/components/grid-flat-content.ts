@@ -16,10 +16,9 @@ export class GridFlatContent<T extends object> extends GridContent<T> {
 
     root.appendChild(this.element);
 
-    this.data
-      .watch$()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((data) => this.renderRows(data));
+    this.internals.query$.pipe(
+      switchMap(),
+      takeUntil(this.destroy$)).subscribe((data) => this.renderRows(data));
   }
 
   private renderRows(rows: T[]): void {

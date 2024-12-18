@@ -15,9 +15,9 @@ export type CellValueRendererContext<TRow extends object> = {
 };
 
 export type FormatterFunction<TRow extends object, TCell> = (value: TCell, context: FormatterFunctionContext<TRow>) => string;
-export type HeaderRenderer = (element: HTMLTableCellElement, text: string, context: HeaderRendererContext) => void;
+export type HeaderRenderer = (element: HTMLElement, text: string, context: HeaderRendererContext) => void;
 export type CellValueRenderer<TRow extends object, TCell> = (
-  element: HTMLTableCellElement,
+  element: HTMLElement,
   value: TCell,
   context: CellValueRendererContext<TRow>
 ) => void;

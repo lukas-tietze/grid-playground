@@ -3,7 +3,7 @@ import { Component } from './component';
 import { Grid } from './grid';
 import { GridInternals } from './grid-internals';
 import { NormalizedGridOptions } from './options';
-import { DataManager } from './data-manager';
+import { DataManager } from './data/data-manager';
 
 export class GridComponent<T extends object> extends Component {
   constructor(internals: GridInternals<T>) {

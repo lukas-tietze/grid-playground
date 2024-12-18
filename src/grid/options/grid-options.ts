@@ -14,7 +14,8 @@ export type ColumnValueRenderer<TRow extends object, TCell> = { renderer?: CellV
 
 export type ColumnValueCommon<TRow extends object, TCell> = ExplicitOptionals<
   OneOf3<ColumnValueFormatter<TRow, TCell>, ColumnValueStaticFormatter, ColumnValueRenderer<TRow, TCell>>
->;
+> &
+  ColumnValueComparer<TCell>;
 
 export type FieldValue<TRow extends object, TKey extends keyof TRow = keyof TRow> = {
   field: TKey;

@@ -1,7 +1,8 @@
-import { DataManager } from '../grid/data-manager';
+import { DataManager } from '../grid/data/data-manager';
 import { Grid } from '../grid/grid';
 import { GridOptions } from '../grid/options';
 import { faker } from '@faker-js/faker';
+import { OneOf } from '../types/one-of';
 
 class DataSource {
   constructor(copy?: Partial<DataSource>) {

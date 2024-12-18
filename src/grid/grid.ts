@@ -1,7 +1,7 @@
 import './styles/index.scss';
 
 import { GridCore } from './components/grid-core';
-import { DataManager } from './data-manager';
+import { DataManager } from './data/data-manager';
 import { GridOptions, normalizeGridOptions } from './options';
 import { GridInternals } from './grid-internals';
 

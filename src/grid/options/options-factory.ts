@@ -8,8 +8,12 @@ import { isPromise } from 'rxjs/internal/util/isPromise';
 export function normalizeGridOptions<T extends object>(options: GridOptions<T>): NormalizedGridOptions<T> {
   console.log(options);
 
+  const columnOptions = options.columns.map(normalizeColumnOptions);
+
   const normalized: NormalizedGridOptions<T> = {
-    columns: options.columns.map(normalizeColumnOptions),
+    columns: columnOptions,
+    displayColumns: columnOptions,
+    columnsById: new Map(columnOptions.map((o) => [o.id, o])),
   };
 
   console.log(normalized);
@@ -17,14 +21,20 @@ export function normalizeGridOptions<T extends object>(options: GridOptions<T>):
   return normalized;
 }
 
-function normalizeColumnOptions<T extends object>(column: ColumnOptions<T>): NormalizedColumnOptions<T> {
+function normalizeColumnOptions<T extends object>(column: ColumnOptions<T>, index: number): NormalizedColumnOptions<T> {
   return {
+    id: index.toFixed(),
     headerText$: createHeaderTextProvider(column),
     headerRenderer: createHeaderRenderer(column),
     dataType: 'other',
     valueAccessor: makeValueAccessor(column),
     valueRenderer: makeValueRenderer(column),
+    comparer: makeComparer(column),
   };
+}
+
+function makeComparer<T>(column: ColumnOptions<T>): NormalizedColumnOptions<T>['comparer'] {
+  return column.comparer;
 }
 
 function makeValueRenderer<T extends object>(column: ColumnValueCommon<T, any>): NormalizedColumnOptions<T>['valueRenderer'] {

@@ -16,6 +16,8 @@ table.til-grid {
 
   tr.til-grid-header-row {
     > th {
+      text-align: left;
+
       border: $border;
       padding: $cell-padding;
       height: $row-height;
