@@ -1,3 +1,5 @@
+@use "sass:math";
+
 $border-color: silver;
 
 $border: 1px solid $border-color;
@@ -16,7 +18,7 @@ table.til-grid {
   border-collapse: collapse;
   border: $border;
 
-  tr.til-grid-header-row {
+  tr.tg-header-row {
     position: sticky;
     top: 0;
     box-shadow: $border-color 0px 3px 3px 0px;
@@ -29,16 +31,54 @@ table.til-grid {
       padding: $cell-padding;
       height: $row-height;
       line-height: $row-line-height;
+
+      > div {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 1px;
+
+        > .tg-column-title {
+          flex: 1 1 0;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        > .tg-column-state {
+          display: none;
+          width: $row-line-height * 0.7;
+          height: $row-line-height * 0.7;
+          background: $bg-color;
+          background-position: center;
+          background-size: contain;
+          border: $border;
+          border-radius: 50%;
+        }
+      }
+
+      &.tg-ordered-asc > div > .tg-column-state.tg-column-state-ordering {
+        display: block;
+        background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBkPSJNMTcgMTRsLTUtNS01IDUiIHN0cm9rZT0iY3VycmVudENvbG9yIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K");
+      }
+
+      &.tg-ordered-desc > div > .tg-column-state.tg-column-state-ordering {
+        display: block;
+        background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBkPSJNNyAxMGw1IDUgNS01IiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==");
+      }
+
+      &.tg-filtered > div > .tg-column-state.tg-column-state-filter {
+      }
     }
   }
 
-  tr.til-grid-content-row {
-    &:hover > td.til-grid-cell {
+  tr.tg-content-row {
+    &:hover > td.tg-cell {
       background-color: $bg-color-hover;
       color: $fg-color-hover;
     }
 
-    > td.til-grid-cell {
+    > td.tg-cell {
       background-color: $bg-color;
       color: $fg-color;
 

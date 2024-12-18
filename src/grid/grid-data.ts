@@ -7,5 +7,5 @@ export type GridState<T extends object> = {
   options: NormalizedGridOptions<T>;
   dataManager: DataManager<T>;
   root: Grid<T>;
-  query: QueryManager;
+  queryManager: QueryManager;
 };

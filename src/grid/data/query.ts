@@ -14,9 +14,11 @@ export type Filter = {
   columnId: string;
 } & (FilterOpEqual | FilterOpNotEqual);
 
+export type OrderDirection = 'ascending' | 'descending';
+
 export type Ordering = {
   columnId: string;
-  mode: 'ascending' | 'descending';
+  mode: OrderDirection;
 };
 
 export type Pagination = {

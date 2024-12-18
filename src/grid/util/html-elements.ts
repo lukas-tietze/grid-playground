@@ -3,16 +3,22 @@ import { OneOf } from '../../types/one-of';
 export type HtmlElementArgs = {
   class?: string | string[];
   data?: Record<string, string>;
-} & Partial<
-  OneOf<
-    {
-      text?: string;
-    },
-    {
-      children?: HTMLElement[];
-    }
-  >
+} & OneOf<
+  {
+    text?: string;
+  },
+  {
+    children?: HTMLElement[];
+  }
 >;
+
+const template = document.createElement('template');
+
+export function parseHtmlElement(html: string): HTMLElement {
+  template.innerHTML = html;
+
+  return template.content.firstElementChild as HTMLElement;
+}
 
 export function applyHtmlElementDefaults(args: HtmlElementArgs | undefined, el: HTMLElement) {
   if (!args) {
@@ -92,6 +98,16 @@ export type TableHeaderCellElementArgs = HtmlElementArgs;
 
 export function th(args?: TableHeaderCellElementArgs): HTMLTableCellElement {
   const el = document.createElement('th');
+
+  applyHtmlElementDefaults(args, el);
+
+  return el;
+}
+
+export type DivElementArgs = HtmlElementArgs;
+
+export function div(args?: DivElementArgs): HTMLDivElement {
+  const el = document.createElement('div');
 
   applyHtmlElementDefaults(args, el);
 

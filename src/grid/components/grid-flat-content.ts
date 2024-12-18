@@ -35,9 +35,9 @@ export class GridFlatContent<T extends object> extends GridContent<T> {
 
   private renderRow(row: T) {
     return tr({
-      class: 'til-grid-content-row',
+      class: 'tg-content-row',
       children: this.options.columns.map((col) => {
-        const element = td({ class: 'til-grid-cell' });
+        const element = td({ class: 'tg-cell' });
         const value = col.valueAccessor(row);
 
         col.valueRenderer(element, value, {

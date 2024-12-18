@@ -3,6 +3,8 @@ export type FormatterFunctionContext<TRow extends object> = {
   columnIndex: number;
 };
 
+export type ColumnId = string;
+
 export type HeaderRendererContext = {
   field?: string;
   dataType: DataTypeNames;

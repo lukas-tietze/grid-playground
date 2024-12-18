@@ -23,8 +23,11 @@ export class Grid<T extends object> {
       options: normalizedOptions,
       dataManager: new FlatDataManager(normalizedOptions),
       root: this,
-      query: new QueryManager(),
+      queryManager: new QueryManager(),
     };
+
+    //// TODO: sub
+    this._internals.queryManager.query$.subscribe((q) => this._internals.dataManager.handleChangedQuery(q));
   }
 
   public get options(): GridOptions<T> {

@@ -1,50 +1,38 @@
-import { Observable, Subscription } from 'rxjs';
 import { GridComponent } from '../grid-component';
-import { th, thead, tr } from '../util/html-elements';
+import { thead, tr } from '../util/html-elements';
 import { GridState } from '../grid-data';
-import { HeaderRenderer } from '../options';
-
-type HeaderCell = {
-  element: HTMLTableCellElement;
-  sub: Subscription;
-};
+import { HeaderCell } from './header-cell';
 
 export class GridHeader<T extends object> extends GridComponent<T> {
   private element?: HTMLTableSectionElement;
 
-  private headerCells: HeaderCell[] = [];
+  private headerCells: HeaderCell<T>[] = [];
 
   constructor(internals: GridState<T>) {
     super(internals);
   }
 
   public render(root: HTMLTableElement): void {
-    for (const { sub } of this.headerCells) {
-      sub.unsubscribe();
+    for (const cell of this.headerCells) {
+      cell.dispose();
     }
 
     this.headerCells = [];
 
-    for (const col of this.options.columns) {
-      const element = th();
+    const row = tr({
+      class: 'tg-header-row',
+    });
 
-      this.headerCells.push({
-        element,
-        sub: col.headerText$.subscribe((text) =>
-          col.headerRenderer(element, text, {
-            dataType: col.dataType,
-          })
-        ),
-      });
+    for (const col of this.options.columns) {
+      const cell = new HeaderCell(this.internals, col.id);
+
+      this.headerCells.push(cell);
+
+      cell.render(row);
     }
 
     this.element = thead({
-      children: [
-        tr({
-          children: this.headerCells.map(({ element }) => element),
-          class: 'til-grid-header-row',
-        }),
-      ],
+      children: [row],
     });
 
     root.appendChild(this.element);

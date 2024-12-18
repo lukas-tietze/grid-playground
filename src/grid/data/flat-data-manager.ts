@@ -3,7 +3,7 @@ import { Pagination, Query } from './query';
 import { Filter, Ordering } from './query';
 import { StopWatch } from '../util';
 import { NormalizedGridOptions } from '../options';
-import { BehaviorSubject, from, map, Observable, of, switchMap, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, combineLatest, from, map, Observable, of, switchMap, withLatestFrom } from 'rxjs';
 
 type DataSource<T> = T[] | Observable<T[]> | Promise<T[]>;
 
@@ -28,9 +28,11 @@ export class FlatDataManager<T extends object> extends DataManager<T> {
     this._src$.next(src);
   }
 
-  public readonly data$: Observable<T[]> = this._src$.pipe(
-    switchMap((src) => (Array.isArray(src) ? of(src) : from(src))),
-    withLatestFrom(this._query$),
+  public readonly data$: Observable<T[]> = combineLatest([
+    this._src$.pipe(switchMap((src) => (Array.isArray(src) ? of(src) : from(src)))),
+
+    this._query$,
+  ]).pipe(
     map(([data, query]) => {
       const sw = new StopWatch('ordering and sorting grid');
 
@@ -93,6 +95,10 @@ export class FlatDataManager<T extends object> extends DataManager<T> {
         res = col.comparer(col.valueAccessor(a), col.valueAccessor(b));
 
         if (res !== 0) {
+          if (ordering.mode === 'descending') {
+            res *= -1;
+          }
+
           break;
         }
       }
