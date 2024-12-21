@@ -1,9 +1,11 @@
 import { from, Observable, of } from 'rxjs';
 
-import { ColumnOptions, GridOptions } from './grid-options';
-import { NormalizedColumnOptions, NormalizedGridOptions } from './normalized-grid-options';
+import { ColumnOptions, GridOptions, VirtualizationOptions } from './grid-options';
+import { NormalizedColumnOptions, NormalizedGridOptions, NormalizedVirtualizationOptions } from './normalized-grid-options';
 import { HeaderRenderer } from './common';
 import { isPromise } from 'rxjs/internal/util/isPromise';
+
+const defaultHeaderRenderer: HeaderRenderer = (element: HTMLElement, text: string) => (element.innerText = text);
 
 export function normalizeGridOptions<T extends object>(options: GridOptions<T>): NormalizedGridOptions<T> {
   console.log(options);
@@ -14,6 +16,7 @@ export function normalizeGridOptions<T extends object>(options: GridOptions<T>):
     columns: columnOptions,
     displayColumns: columnOptions,
     columnsById: new Map(columnOptions.map((o) => [o.id, o])),
+    virtualization: makeVirtualizationOptions(options.virtualization),
   };
 
   console.log(normalized);
@@ -69,4 +72,13 @@ function createHeaderRenderer<T extends object>(column: ColumnOptions<T>): Norma
   return column.headerRenderer ?? defaultHeaderRenderer;
 }
 
-const defaultHeaderRenderer: HeaderRenderer = (element: HTMLElement, text: string) => (element.innerText = text);
+function makeVirtualizationOptions(virtualization: VirtualizationOptions | undefined): NormalizedVirtualizationOptions {
+  if (typeof virtualization === 'boolean') {
+    return { enabled: virtualization, viewSize: 50 };
+  }
+
+  return {
+    enabled: virtualization?.enabled ?? false,
+    viewSize: virtualization?.viewSize ?? 50,
+  };
+}

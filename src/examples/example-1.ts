@@ -30,6 +30,7 @@ const options: GridOptions<DataSource> = {
       name: 'Age',
     },
   ],
+  virtualization: true,
 };
 
 const data: DataSource[] = new Array(10_000).fill(0).map(

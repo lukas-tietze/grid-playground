@@ -13,8 +13,14 @@ export type NormalizedColumnOptions<TRow extends object> = {
   comparer: CompareFunction<any>;
 };
 
+export type NormalizedVirtualizationOptions = {
+  enabled: boolean;
+  viewSize: number;
+};
+
 export type NormalizedGridOptions<TRow extends object> = {
   columns: NormalizedColumnOptions<TRow>[];
   displayColumns: NormalizedColumnOptions<TRow>[];
   columnsById: Map<string, NormalizedColumnOptions<TRow>>;
+  virtualization: NormalizedVirtualizationOptions;
 };

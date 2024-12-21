@@ -1,31 +1,37 @@
 import { GridComponent } from '../grid-component';
 import { GridState } from '../grid-data';
-import { table } from '../util/html-elements';
+import { div, table } from '../util/html-elements';
 import { GridContent } from './grid-content';
 import { GridFlatContent } from './grid-flat-content';
+import { GridVirtualContent } from './grid-virtual-content';
 import { GridHeader } from './header';
 
 export class GridCore<T extends object> extends GridComponent<T> {
   private _root: ShadowRoot | HTMLElement;
 
-  private header: GridHeader<T>;
-  private content: GridContent<T>;
+  private _header: GridHeader<T>;
+  private _content: GridContent<T>;
 
-  private element?: HTMLTableElement;
+  private _element?: HTMLElement;
 
   constructor(root: ShadowRoot | HTMLElement, internals: GridState<T>) {
     super(internals);
 
     this._root = root;
-    this.header = new GridHeader(this.internals);
-    this.content = new GridFlatContent(this.internals);
+    this._header = new GridHeader(this.internals);
+    this._content = this.options.virtualization.enabled ? new GridVirtualContent(this.internals) : new GridFlatContent(this.internals);
   }
 
   public render(): void {
-    this.element = table({ class: 'til-grid' });
+    const tableElement = table({ class: 'tg' });
 
-    this._root.replaceChildren(this.element);
-    this.header.render(this.element);
-    this.content.render(this.element);
+    this._element = div({
+      children: [tableElement],
+      class: 'tg-wrapper',
+    });
+
+    this._root.replaceChildren(this._element);
+    this._header.render(tableElement);
+    this._content.render(tableElement);
   }
 }

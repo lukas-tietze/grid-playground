@@ -27,6 +27,14 @@ export type ComputedValue<TRow extends object, TResult = unknown> = {
 
 export type ColumnOptions<TRow extends object> = ColumnHeaderOptions & OneOf<FieldValue<TRow>, ComputedValue<TRow>>;
 
+export type VirtualizationOptions =
+  | boolean
+  | {
+      enabled: boolean;
+      viewSize: number;
+    };
+
 export type GridOptions<TRow extends object> = {
   columns: ColumnOptions<TRow>[];
+  virtualization?: VirtualizationOptions;
 };
