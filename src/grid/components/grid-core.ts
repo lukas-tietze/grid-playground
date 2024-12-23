@@ -12,7 +12,7 @@ export class GridCore<T extends object> extends GridComponent<T> {
   private _header: GridHeader<T>;
   private _content: GridContent<T>;
 
-  private _element?: HTMLElement;
+  private _element?: HTMLDivElement;
 
   constructor(root: ShadowRoot | HTMLElement, internals: GridState<T>) {
     super(internals);
@@ -23,15 +23,12 @@ export class GridCore<T extends object> extends GridComponent<T> {
   }
 
   public render(): void {
-    const tableElement = table({ class: 'tg' });
-
     this._element = div({
-      children: [tableElement],
       class: 'tg-wrapper',
     });
 
     this._root.replaceChildren(this._element);
-    this._header.render(tableElement);
-    this._content.render(tableElement);
+    this._header.render(this._element);
+    this._content.render(this._element);
   }
 }

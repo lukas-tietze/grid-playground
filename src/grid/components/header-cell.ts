@@ -29,11 +29,7 @@ export class HeaderCell<T extends object> extends GridComponent<T> {
   }
 
   public render(parent: HTMLTableRowElement) {
-    const options = this.options.columnsById.get(this._colId);
-
-    if (!options) {
-      throw new Error();
-    }
+    const col = this.internals.getColumnById(this._colId);
 
     const textElement = div({ class: 'tg-column-title' });
     const orderingStateElement = div({ class: ['tg-column-state', 'tg-column-state-ordering'] });
@@ -48,7 +44,11 @@ export class HeaderCell<T extends object> extends GridComponent<T> {
       class: 'tg-column-header',
     }));
 
-    const textSub = options.headerText$.subscribe((text) => options.headerRenderer(textElement, text, { dataType: options.dataType }));
+    const widthSub = col.width$.subscribe((width) => (element.style.width = `${width}px`));
+
+    const textSub = col.options.headerText$.subscribe((text) =>
+      col.options.headerRenderer(textElement, text, { dataType: col.options.dataType })
+    );
 
     const clickSub = fromEvent(element, 'click', { passive: true }).subscribe(() => {
       this._ordering = this.internals.queryManager.toggleOrdering(this._colId);
@@ -78,6 +78,7 @@ export class HeaderCell<T extends object> extends GridComponent<T> {
     sub.add(textSub);
     sub.add(clickSub);
     sub.add(stateSub);
+    sub.add(widthSub);
 
     parent.appendChild(this._element);
   }

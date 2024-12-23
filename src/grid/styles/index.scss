@@ -20,17 +20,20 @@ div.tg-wrapper {
   max-height: $grid-height;
   overflow: auto;
   border: $border;
+
+  > table {
+    border-collapse: collapse;
+    border: $border;
+  }
 }
 
-table.tg {
-  border-collapse: collapse;
-  border: $border;
-}
-
-tr.tg-header-row {
+table.tg-header {
   position: sticky;
   top: 0;
   box-shadow: $border-color 0px 3px 3px 0px;
+}
+
+tr.tg-header-row {
   background: white;
 
   > th {

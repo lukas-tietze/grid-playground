@@ -1,10 +1,10 @@
 import { GridComponent } from '../grid-component';
-import { thead, tr } from '../util/html-elements';
+import { table, thead, tr } from '../util/html-elements';
 import { GridState } from '../grid-data';
 import { HeaderCell } from './header-cell';
 
 export class GridHeader<T extends object> extends GridComponent<T> {
-  private element?: HTMLTableSectionElement;
+  private element?: HTMLTableElement;
 
   private headerCells: HeaderCell<T>[] = [];
 
@@ -12,7 +12,7 @@ export class GridHeader<T extends object> extends GridComponent<T> {
     super(internals);
   }
 
-  public render(root: HTMLTableElement): void {
+  public render(root: HTMLDivElement): void {
     for (const cell of this.headerCells) {
       cell.dispose();
     }
@@ -31,8 +31,13 @@ export class GridHeader<T extends object> extends GridComponent<T> {
       cell.render(row);
     }
 
-    this.element = thead({
-      children: [row],
+    this.element = table({
+      class: 'tg-header',
+      children: [
+        thead({
+          children: [row],
+        }),
+      ],
     });
 
     root.appendChild(this.element);

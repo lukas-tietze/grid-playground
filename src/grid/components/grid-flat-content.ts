@@ -1,26 +1,28 @@
 import { takeUntil } from 'rxjs';
 import { GridState } from '../grid-data';
-import { tbody, td, tr } from '../util/html-elements';
+import { table, tbody, td, tr } from '../util/html-elements';
 import { GridContent } from './grid-content';
 import { StopWatch } from '../util';
 
 export class GridFlatContent<T extends object> extends GridContent<T> {
-  private element?: HTMLTableSectionElement;
+  private _element?: HTMLTableElement;
 
   constructor(internals: GridState<T>) {
     super(internals);
   }
 
-  public render(root: HTMLTableElement): void {
-    this.element = tbody({});
+  public render(root: HTMLDivElement): void {
+    this._element = table({
+      children: [tbody({})],
+    });
 
-    root.appendChild(this.element);
+    root.appendChild(this._element);
 
     this.internals.dataManager.data$.pipe(takeUntil(this.destroy$)).subscribe((data) => this.renderRows(data));
   }
 
   private renderRows(rows: T[]): void {
-    if (!this.element) {
+    if (!this._element) {
       return;
     }
 
@@ -28,7 +30,7 @@ export class GridFlatContent<T extends object> extends GridContent<T> {
 
     const rowElements = rows.map((row) => this.renderRow(row));
 
-    this.element.replaceChildren(...rowElements);
+    this._element.replaceChildren(...rowElements);
 
     ws.report();
   }

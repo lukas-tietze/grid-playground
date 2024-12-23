@@ -1,9 +1,9 @@
 import { fromEvent, takeUntil, tap } from 'rxjs';
 import { GridState } from '../grid-data';
-import { tbody, td, tr } from '../util/html-elements';
+import { table, tbody, td, tr } from '../util/html-elements';
 import { GridContent } from './grid-content';
 import { StopWatch } from '../util';
-import { ro } from '@faker-js/faker';
+import { GridContentColGroup } from './grid-content-col-group';
 
 type View = {
   rowStart: number;
@@ -12,7 +12,11 @@ type View = {
 };
 
 export class GridVirtualContent<T extends object> extends GridContent<T> {
-  private _element?: HTMLTableSectionElement;
+  private _element?: HTMLTableElement;
+
+  private _contentRoot?: HTMLTableSectionElement;
+
+  private colGroup?: GridContentColGroup<T>;
 
   private _view: View = {
     rowStart: 0,
@@ -25,9 +29,15 @@ export class GridVirtualContent<T extends object> extends GridContent<T> {
   }
 
   public render(root: HTMLTableElement): void {
-    this._element = tbody({});
+    this._element = table({
+      children: [(this._contentRoot = tbody({}))],
+    });
 
     root.appendChild(this._element);
+
+    this.colGroup = new GridContentColGroup(this.internals);
+
+    this.colGroup.render(this._element);
 
     this.internals.dataManager.data$
       .pipe(
@@ -38,12 +48,12 @@ export class GridVirtualContent<T extends object> extends GridContent<T> {
   }
 
   private renderRows(rows: T[]): void {
-    if (!this._element) {
+    if (!this._contentRoot) {
       return;
     }
 
     const ws = new StopWatch('grid flat content rendering');
-    const existingNodes = Array.from(this._element.children);
+    const existingNodes = Array.from(this._contentRoot.children);
 
     //// reset nodes
     let i = 0;
@@ -62,7 +72,7 @@ export class GridVirtualContent<T extends object> extends GridContent<T> {
     }
 
     while (i < rows.length) {
-      this._element.appendChild(
+      this._contentRoot.appendChild(
         tr({
           class: ['tg-content-row', 'tg-dry'],
           children: this.options.columns.map(() => td({ class: 'tg-cell', text: '\u00A0' })),
@@ -72,7 +82,7 @@ export class GridVirtualContent<T extends object> extends GridContent<T> {
       i++;
     }
 
-    fromEvent(this._element, 'scroll').pipe(takeUntil(this.destroy$)).subscribe();
+    fromEvent(this._contentRoot, 'scroll').pipe(takeUntil(this.destroy$)).subscribe();
 
     ws.report();
   }

@@ -6,6 +6,7 @@ import { GridState } from './grid-data';
 import { QueryManager } from './querying/query-manager';
 import { Observable } from 'rxjs';
 import { FlatDataManager } from './data/flat-data-manager';
+import { ColumnData } from './column-data';
 
 export class Grid<T extends object> {
   private _options: GridOptions<T>;
@@ -19,12 +20,12 @@ export class Grid<T extends object> {
 
     const normalizedOptions = normalizeGridOptions(options);
 
-    this._internals = {
+    this._internals = new GridState<T>({
       options: normalizedOptions,
       dataManager: new FlatDataManager(normalizedOptions),
       root: this,
       queryManager: new QueryManager(),
-    };
+    });
 
     //// TODO: sub
     this._internals.queryManager.query$.subscribe((q) => this._internals.dataManager.handleChangedQuery(q));
