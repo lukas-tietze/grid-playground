@@ -9,7 +9,7 @@
 # Node
 /node_modules
 npm-debug.log
-packagelock.json
+package-lock.json
 bun.lockb
 yarn-error.log
 .vite
