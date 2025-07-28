@@ -12,6 +12,7 @@ npm-debug.log
 packagelock.json
 bun.lockb
 yarn-error.log
+.vite
 
 # IDEs and editors
 .idea/
