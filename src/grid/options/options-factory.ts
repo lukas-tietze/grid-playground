@@ -1,4 +1,4 @@
-import { from, Observable, of } from 'rxjs';
+import { from, noop, Observable, of } from 'rxjs';
 
 import { ColumnOptions, GridOptions, VirtualizationOptions } from './grid-options';
 import { NormalizedColumnOptions, NormalizedGridOptions, NormalizedVirtualizationOptions } from './normalized-grid-options';
@@ -27,6 +27,7 @@ export function normalizeGridOptions<T extends object>(options: GridOptions<T>):
 function normalizeColumnOptions<T extends object>(column: ColumnOptions<T>, index: number): NormalizedColumnOptions<T> {
   return {
     id: index.toFixed(),
+    field: column.field ?? '[computed]',
     headerText$: createHeaderTextProvider(column),
     headerRenderer: createHeaderRenderer(column),
     dataType: 'other',
@@ -57,7 +58,9 @@ function makeValueRenderer<T extends object>(column: ColumnOptions<T>): Normaliz
   // if (column.renderer) {
   //   return column.renderer;
   // }
-  return (element, value) => (element.innerText = String(value));
+  return (element, value) => {
+    element.innerText = String(value);
+  };
 }
 
 function makeValueAccessor<T extends object>(column: ColumnOptions<T>): NormalizedColumnOptions<T>['valueAccessor'] {

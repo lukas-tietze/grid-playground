@@ -27,6 +27,10 @@ div.tg-wrapper {
   }
 }
 
+table.tg-table {
+  table-layout: fixed;
+}
+
 tr.tg-header-row {
   position: sticky;
   top: 0;

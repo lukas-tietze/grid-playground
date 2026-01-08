@@ -4,7 +4,8 @@ import { div, table } from '../util/html-elements';
 import { GridContent } from './grid-content';
 import { GridContentColGroup } from './grid-content-col-group';
 import { GridFlatContent } from './grid-flat-content';
-import { GridVirtualContent } from './grid-virtual-content';
+import { GridFullVirtualContent } from './grid-full-virtual-content';
+import { GridVirtualRowContent } from './grid-virtual-row-content';
 import { GridHeader } from './header';
 
 export class GridCore<T extends object> extends GridComponent<T> {
@@ -22,14 +23,18 @@ export class GridCore<T extends object> extends GridComponent<T> {
 
     this._root = root;
     this._header = new GridHeader(this.internals);
-    this._content = this.options.virtualization.enabled ? new GridVirtualContent(this.internals) : new GridFlatContent(this.internals);
+    this._content = this.options.virtualization.enabled ? new GridFullVirtualContent(this.internals) : new GridFlatContent(this.internals);
     this._colGroup = new GridContentColGroup(this.internals);
   }
 
   public render(): void {
     this._element = div({
       class: 'tg-wrapper',
-      children: [(this._contentTableElement = table({}))],
+      children: [
+        (this._contentTableElement = table({
+          class: 'tg-table',
+        })),
+      ],
       styles: {
         '--tg-row-height': `${this.options.rowHeight || 30}px`,
       },

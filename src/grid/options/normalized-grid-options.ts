@@ -5,6 +5,7 @@ export type ColumnValueAccessor<TRow extends object, TCell> = (row: TRow) => TCe
 
 export type NormalizedColumnOptions<TRow extends object> = {
   id: string;
+  field: string;
   headerText$: Observable<string>;
   headerRenderer: HeaderRenderer;
   dataType: DataTypeNames;

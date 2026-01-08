@@ -18,7 +18,7 @@ export type ColumnValueCommon<TRow extends object, TCell> = ExplicitOptionals<
   ColumnValueComparer<TCell>;
 
 export type FieldValue<TRow extends object, TKey extends keyof TRow = keyof TRow> = {
-  field: TKey;
+  field: TKey & string;
 } & ColumnValueCommon<TRow, TRow[TKey]>;
 
 export type ComputedValue<TRow extends object, TResult = unknown> = {

@@ -10,7 +10,10 @@ type View = {
   hydratedRowElements: HTMLTableRowElement[];
 };
 
-export class GridVirtualContent<T extends object> extends GridContent<T> {
+/**
+ * Paints all required rows, but only renders data to those rows that are currently visible in the viewport.
+ */
+export class GridVirtualRowContent<T extends object> extends GridContent<T> {
   private _element?: HTMLTableSectionElement;
 
   private _data: T[] = [];

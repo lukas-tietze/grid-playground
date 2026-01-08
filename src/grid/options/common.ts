@@ -16,13 +16,15 @@ export type CellValueRendererContext<TRow extends object> = {
   row: TRow;
 };
 
+export type CellValueDisposeCallback = () => void;
+
 export type FormatterFunction<TRow extends object, TCell> = (value: TCell, context: FormatterFunctionContext<TRow>) => string;
 export type HeaderRenderer = (element: HTMLElement, text: string, context: HeaderRendererContext) => void;
 export type CellValueRenderer<TRow extends object, TCell> = (
   element: HTMLElement,
   value: TCell,
   context: CellValueRendererContext<TRow>
-) => void;
+) => CellValueDisposeCallback | void | undefined;
 export type CompareFunction<T> = (a: T, b: T) => number;
 
 export type DefaultSupportedDataTypes = string | number | boolean | Date;
