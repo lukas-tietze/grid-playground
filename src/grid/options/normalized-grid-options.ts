@@ -19,8 +19,24 @@ export type NormalizedVirtualizationOptions = {
 };
 
 export type NormalizedGridOptions<TRow extends object> = {
+  /**
+   * Options for the columns to be displayed in the grid.
+   */
   columns: NormalizedColumnOptions<TRow>[];
-  displayColumns: NormalizedColumnOptions<TRow>[];
+
+  /**
+   * Mapping of column IDs to their respective options.
+   */
   columnsById: Map<string, NormalizedColumnOptions<TRow>>;
+
+  /**
+   * Virtualization options for the grid.
+   * Object is set even if virtualization is disabled.
+   */
   virtualization: NormalizedVirtualizationOptions;
+
+  /**
+   * Fixed height for each row in pixels.
+   */
+  rowHeight: number;
 };

@@ -25,6 +25,9 @@ export class GridCore<T extends object> extends GridComponent<T> {
   public render(): void {
     this._element = div({
       class: 'tg-wrapper',
+      styles: {
+        '--tg-row-height': `${this.options.rowHeight || 30}px`,
+      },
     });
 
     this._root.replaceChildren(this._element);

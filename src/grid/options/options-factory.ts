@@ -14,9 +14,9 @@ export function normalizeGridOptions<T extends object>(options: GridOptions<T>):
 
   const normalized: NormalizedGridOptions<T> = {
     columns: columnOptions,
-    displayColumns: columnOptions,
     columnsById: new Map(columnOptions.map((o) => [o.id, o])),
     virtualization: makeVirtualizationOptions(options.virtualization),
+    rowHeight: options.rowHeight ?? 30,
   };
 
   console.log(normalized);

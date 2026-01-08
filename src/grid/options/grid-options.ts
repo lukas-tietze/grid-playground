@@ -35,6 +35,20 @@ export type VirtualizationOptions =
     };
 
 export type GridOptions<TRow extends object> = {
+  /**
+   * Options for the columns to be displayed in the grid.
+   */
   columns: ColumnOptions<TRow>[];
+
+  /**
+   * Options for virtualization of the grid.
+   * Improves performance for large datasets by only rendering visible rows.
+   */
   virtualization?: VirtualizationOptions;
+
+  /**
+   * Sets the fixed height for each row in pixels.
+   * Defaults to 30 if not specified.
+   */
+  rowHeight?: number;
 };

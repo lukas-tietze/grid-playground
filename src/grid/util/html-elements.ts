@@ -2,6 +2,7 @@ import { OneOf } from '../../types/one-of';
 
 export type HtmlElementArgs = {
   class?: string | string[];
+  styles?: Record<string, string>;
   data?: Record<string, string>;
 } & OneOf<
   {
@@ -43,6 +44,12 @@ export function applyHtmlElementDefaults(args: HtmlElementArgs | undefined, el: 
     el.innerText = args.text;
   } else if (args.children) {
     el.append(...args.children);
+  }
+
+  if (args.styles) {
+    for (const [key, value] of Object.entries(args.styles)) {
+      el.style.setProperty(key, value);
+    }
   }
 }
 

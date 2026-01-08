@@ -6,7 +6,7 @@ $border: 1px solid $border-color;
 $cell-padding-x: 10px;
 $cell-padding-y: 5px;
 $cell-padding: $cell-padding-x $cell-padding-x;
-$row-height: 30px;
+$row-height: var(--tg-row-height);
 $row-line-height: $row-height - $cell-padding-y;
 
 $grid-height: 450px;
@@ -59,8 +59,8 @@ tr.tg-header-row {
 
       > .tg-column-state {
         display: none;
-        width: $row-line-height * 0.7;
-        height: $row-line-height * 0.7;
+        width: 21px;
+        height: 21px;
         background: $bg-color;
         background-position: center;
         background-size: contain;
@@ -85,11 +85,6 @@ tr.tg-header-row {
 }
 
 tr.tg-content-row {
-  &:hover > td.tg-cell {
-    background-color: $bg-color-hover;
-    color: $fg-color-hover;
-  }
-
   > td.tg-cell {
     background-color: $bg-color;
     color: $fg-color;
@@ -99,4 +94,24 @@ tr.tg-content-row {
     height: $row-height;
     line-height: $row-line-height;
   }
+
+  &:hover > td.tg-cell {
+    background-color: $bg-color-hover;
+    color: $fg-color-hover;
+  }
+
+  // Animation aktuell zu langsam, wenn sie für alle Zellen gerendert wird.
+  // &.tg-dry > td.tg-cell {
+  //   @keyframes shimmer {
+  //     0% {
+  //       background-position: -200px 0;
+  //     }
+  //     100% {
+  //       background-position: 0 0;
+  //     }
+  //   }
+
+  //   background: linear-gradient(45deg, $bg-color 20%, #f0f0f0 25%, #f0f0f0 35%, $bg-color 40%, $bg-color);
+  //   animation: shimmer 1.5s infinite;
+  // }
 }

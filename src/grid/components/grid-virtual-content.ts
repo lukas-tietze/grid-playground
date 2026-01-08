@@ -1,4 +1,4 @@
-import { fromEvent, takeUntil, tap } from 'rxjs';
+import { debounceTime, fromEvent, Subscription, takeUntil, tap } from 'rxjs';
 import { GridState } from '../grid-data';
 import { table, tbody, td, tr } from '../util/html-elements';
 import { GridContent } from './grid-content';
@@ -16,13 +16,15 @@ export class GridVirtualContent<T extends object> extends GridContent<T> {
 
   private _contentRoot?: HTMLTableSectionElement;
 
-  private colGroup?: GridContentColGroup<T>;
+  private _colGroup?: GridContentColGroup<T>;
 
   private _view: View = {
     rowStart: 0,
     rowEnd: 0,
     hydratedRowElements: [],
   };
+
+  private _scrollSubscription?: Subscription;
 
   constructor(internals: GridState<T>) {
     super(internals);
@@ -35,9 +37,9 @@ export class GridVirtualContent<T extends object> extends GridContent<T> {
 
     root.appendChild(this._element);
 
-    this.colGroup = new GridContentColGroup(this.internals);
+    this._colGroup = new GridContentColGroup(this.internals);
 
-    this.colGroup.render(this._element);
+    this._colGroup.render(this._element);
 
     this.internals.dataManager.data$
       .pipe(
@@ -52,7 +54,7 @@ export class GridVirtualContent<T extends object> extends GridContent<T> {
       return;
     }
 
-    const ws = new StopWatch('grid flat content rendering');
+    const sw = new StopWatch('grid virtual content rendering');
     const existingNodes = Array.from(this._contentRoot.children);
 
     //// reset nodes
@@ -82,9 +84,28 @@ export class GridVirtualContent<T extends object> extends GridContent<T> {
       i++;
     }
 
-    fromEvent(this._contentRoot, 'scroll').pipe(takeUntil(this.destroy$)).subscribe();
+    this._scrollSubscription?.unsubscribe();
+    this._scrollSubscription = fromEvent(this._contentRoot, 'scroll', { passive: true })
+      .pipe(
+        debounceTime(10),
+        takeUntil(this.destroy$))
+      .subscribe(() => this.updateView());
 
-    ws.report();
+    sw.report();
+  }
+
+  private updateView(): void {
+
+  }
+
+  private getVisibleRowRange(): { start: number; end: number } {
+    if (!this._contentRoot) {
+      return { start: 0, end: 0 };
+    }
+
+    const scrollTop = this._contentRoot.scrollTop;
+    const clientHeight = this._contentRoot.clientHeight;
+    const rowHeight = this.options.rowHeight || 30;
   }
 
   private hydrateRow(rowData: T, rowElement: HTMLTableRowElement): void {
