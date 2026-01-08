@@ -1,0 +1,18 @@
+@keyframes Shimmer {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 150px 0;
+  }
+}
+
+div.shimmer {
+  animation: Shimmer 1.5s infinite;
+  background: linear-gradient(
+    to right,
+    #eeeeee 0%,
+    #dddddd 50%,
+    #eeeeee 100%
+  );
+}

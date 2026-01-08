@@ -1,6 +1,9 @@
+import './example-2.scss';
+
 import { Grid } from '../grid/grid';
 import { GridOptions } from '../grid/options';
 import { faker } from '@faker-js/faker';
+import { div } from '../grid/util';
 
 class DataSource {
   constructor(copy?: Partial<DataSource>) {
@@ -50,12 +53,15 @@ const options: GridOptions<DataSource> = {
     {
       field: 'age',
       name: 'Age',
+      renderer: (element, value, context) => {
+        element.replaceChildren(div({ class: 'shimmer', text: `${value}` }));
+      },
     },
   ],
-  virtualization: false,
+  virtualization: true,
 };
 
-const data: DataSource[] = new Array(10_000).fill(0).map(
+const data: DataSource[] = new Array(1_000_000).fill(0).map(
   (_, i) =>
     new DataSource({
       id: i,
@@ -67,7 +73,7 @@ const data: DataSource[] = new Array(10_000).fill(0).map(
     })
 );
 
-export function renderExample1(root: HTMLElement | null | undefined) {
+export function renderExample2(root: HTMLElement | null | undefined) {
   if (!root) {
     throw new Error('Root element not found');
   }

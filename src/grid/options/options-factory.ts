@@ -4,6 +4,7 @@ import { ColumnOptions, GridOptions, VirtualizationOptions } from './grid-option
 import { NormalizedColumnOptions, NormalizedGridOptions, NormalizedVirtualizationOptions } from './normalized-grid-options';
 import { HeaderRenderer } from './common';
 import { isPromise } from 'rxjs/internal/util/isPromise';
+import { universalFormatFunction } from './default-formatter';
 
 const defaultHeaderRenderer: HeaderRenderer = (element: HTMLElement, text: string) => (element.innerText = text);
 
@@ -46,18 +47,24 @@ function makeComparer<T extends object>(column: ColumnOptions<T>): NormalizedCol
 }
 
 function makeValueRenderer<T extends object>(column: ColumnOptions<T>): NormalizedColumnOptions<T>['valueRenderer'] {
-  // if (column.format) {
-  //   return () => {
-  //     throw new Error('not implemented');
-  //   };
-  // }
-  // if (column.formatter) {
-  //   const formatter = column.formatter;
-  //   return (element, value, context) => (element.innerText = formatter(value, { columnIndex: 0, row: context.row }));
-  // }
-  // if (column.renderer) {
-  //   return column.renderer;
-  // }
+  if ('format' in column && column.format) {
+    return (element, value) => {
+      element.innerText = universalFormatFunction(value);
+    };
+  }
+
+  if ('formatter' in column && column.formatter) {
+    const formatter = column.formatter;
+
+    return (element, value, context) => {
+      element.innerText = formatter(value, { columnIndex: 0, row: context.row });
+    };
+  }
+
+  if ('renderer' in column && column.renderer) {
+    return column.renderer;
+  }
+
   return (element, value) => {
     element.innerText = String(value);
   };

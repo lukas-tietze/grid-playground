@@ -107,19 +107,4 @@ tr.tg-content-row {
     background-color: $bg-color-hover;
     color: $fg-color-hover;
   }
-
-  // Animation aktuell zu langsam, wenn sie für alle Zellen gerendert wird.
-  // &.tg-dry > td.tg-cell {
-  //   @keyframes shimmer {
-  //     0% {
-  //       background-position: -200px 0;
-  //     }
-  //     100% {
-  //       background-position: 0 0;
-  //     }
-  //   }
-
-  //   background: linear-gradient(45deg, $bg-color 20%, #f0f0f0 25%, #f0f0f0 35%, $bg-color 40%, $bg-color);
-  //   animation: shimmer 1.5s infinite;
-  // }
 }
