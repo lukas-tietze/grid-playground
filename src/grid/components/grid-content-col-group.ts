@@ -1,7 +1,6 @@
 import { takeUntil } from 'rxjs';
 import { GridComponent } from '../grid-component';
 import { GridState } from '../grid-data';
-import { GridContent } from './grid-content';
 
 export class GridContentColGroup<T extends object> extends GridComponent<T> {
   private _element?: HTMLTableColElement;

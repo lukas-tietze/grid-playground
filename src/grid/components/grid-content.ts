@@ -6,5 +6,5 @@ export abstract class GridContent<T extends object> extends GridComponent<T> {
     super(internals);
   }
 
-  public abstract render(root: HTMLDivElement): void;
+  public abstract render(root: HTMLTableElement): void;
 }

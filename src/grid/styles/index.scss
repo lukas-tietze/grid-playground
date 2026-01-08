@@ -27,7 +27,7 @@ div.tg-wrapper {
   }
 }
 
-table.tg-header {
+tr.tg-header-row {
   position: sticky;
   top: 0;
   box-shadow: $border-color 0px 3px 3px 0px;
@@ -93,6 +93,10 @@ tr.tg-content-row {
     padding: $cell-padding;
     height: $row-height;
     line-height: $row-line-height;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
 
   &:hover > td.tg-cell {

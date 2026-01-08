@@ -1,20 +1,18 @@
 import { takeUntil } from 'rxjs';
 import { GridState } from '../grid-data';
-import { table, tbody, td, tr } from '../util/html-elements';
+import { tbody, td, tr } from '../util/html-elements';
 import { GridContent } from './grid-content';
 import { StopWatch } from '../util';
 
 export class GridFlatContent<T extends object> extends GridContent<T> {
-  private _element?: HTMLTableElement;
+  private _element?: HTMLTableSectionElement;
 
   constructor(internals: GridState<T>) {
     super(internals);
   }
 
-  public render(root: HTMLDivElement): void {
-    this._element = table({
-      children: [tbody({})],
-    });
+  public render(root: HTMLTableElement): void {
+    this._element = tbody({});
 
     root.appendChild(this._element);
 

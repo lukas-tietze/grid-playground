@@ -1,9 +1,8 @@
-import { debounceTime, fromEvent, Subscription, takeUntil, tap } from 'rxjs';
+import { debounceTime, fromEvent, startWith, Subscription, takeUntil, tap } from 'rxjs';
 import { GridState } from '../grid-data';
-import { table, tbody, td, tr } from '../util/html-elements';
+import { tbody, td, tr } from '../util/html-elements';
 import { GridContent } from './grid-content';
 import { StopWatch } from '../util';
-import { GridContentColGroup } from './grid-content-col-group';
 
 type View = {
   rowStart: number;
@@ -12,11 +11,9 @@ type View = {
 };
 
 export class GridVirtualContent<T extends object> extends GridContent<T> {
-  private _element?: HTMLTableElement;
+  private _element?: HTMLTableSectionElement;
 
-  private _contentRoot?: HTMLTableSectionElement;
-
-  private _colGroup?: GridContentColGroup<T>;
+  private _data: T[] = [];
 
   private _view: View = {
     rowStart: 0,
@@ -31,36 +28,33 @@ export class GridVirtualContent<T extends object> extends GridContent<T> {
   }
 
   public render(root: HTMLTableElement): void {
-    this._element = table({
-      children: [(this._contentRoot = tbody({}))],
-    });
+    this._element = tbody({});
 
     root.appendChild(this._element);
 
-    this._colGroup = new GridContentColGroup(this.internals);
-
-    this._colGroup.render(this._element);
-
     this.internals.dataManager.data$
       .pipe(
-        tap((data) => this.renderRows(data)),
+        tap((data) => {
+          this._data = data;
+          this.renderRows();
+        }),
         takeUntil(this.destroy$)
       )
       .subscribe();
   }
 
-  private renderRows(rows: T[]): void {
-    if (!this._contentRoot) {
+  private renderRows(): void {
+    if (!this._element) {
       return;
     }
 
     const sw = new StopWatch('grid virtual content rendering');
-    const existingNodes = Array.from(this._contentRoot.children);
+    const existingNodes = Array.from(this._element.children);
 
     //// reset nodes
     let i = 0;
 
-    while (i < existingNodes.length && i < rows.length) {
+    while (i < existingNodes.length && i < this._data.length) {
       existingNodes[i].classList.add('tg-dry');
       existingNodes[i].classList.remove('tg-hydrated');
 
@@ -73,8 +67,8 @@ export class GridVirtualContent<T extends object> extends GridContent<T> {
       i++;
     }
 
-    while (i < rows.length) {
-      this._contentRoot.appendChild(
+    while (i < this._data.length) {
+      this._element.appendChild(
         tr({
           class: ['tg-content-row', 'tg-dry'],
           children: this.options.columns.map(() => td({ class: 'tg-cell', text: '\u00A0' })),
@@ -85,27 +79,109 @@ export class GridVirtualContent<T extends object> extends GridContent<T> {
     }
 
     this._scrollSubscription?.unsubscribe();
-    this._scrollSubscription = fromEvent(this._contentRoot, 'scroll', { passive: true })
-      .pipe(
-        debounceTime(10),
-        takeUntil(this.destroy$))
+    this._scrollSubscription = fromEvent(this.scrollRoot(), 'scroll', { passive: true })
+      .pipe(debounceTime(10), startWith(1), takeUntil(this.destroy$))
       .subscribe(() => this.updateView());
 
     sw.report();
   }
 
-  private updateView(): void {
+  private scrollRoot(): HTMLElement {
+    const scrollRoot = this._element?.parentElement?.parentElement;
 
+    if (!scrollRoot) {
+      throw new Error('Unable to find scrollable root element for virtual content');
+    }
+
+    return scrollRoot;
+  }
+
+  private updateView(): void {
+    if (!this._element) {
+      return;
+    }
+
+    const renderRange = this.getRenderRowRange();
+
+    const sw = new StopWatch(`grid virtual content updating view for rows: ${renderRange.start} - ${renderRange.end}`);
+
+    if (renderRange.start === this._view.rowStart && renderRange.end === this._view.rowEnd) {
+      console.log('No changes in render range, skipping view update');
+
+      sw.report();
+
+      return;
+    }
+
+    if (renderRange.start < this._view.rowStart) {
+      for (let i = renderRange.start; i < this._view.rowStart; i++) {
+        const rowElement = this._element.children[i] as HTMLTableRowElement;
+
+        this.hydrateRow(this._data[i], rowElement);
+
+        this._view.hydratedRowElements.push(rowElement);
+      }
+    } else {
+      const removed = this._view.hydratedRowElements.splice(0, this._view.rowStart - renderRange.start);
+
+      for (const rowElement of removed) {
+        this.clearRow(rowElement);
+      }
+    }
+
+    if (renderRange.end > this._view.rowEnd) {
+      for (let i = this._view.rowEnd; i < renderRange.end; i++) {
+        const rowElement = this._element.children[i] as HTMLTableRowElement;
+
+        this.hydrateRow(this._data[i], rowElement);
+
+        this._view.hydratedRowElements.push(rowElement);
+      }
+    } else {
+      const removeCount = this._view.rowEnd - renderRange.end;
+      const startIndex = this._view.hydratedRowElements.length - removeCount;
+
+      const removed = this._view.hydratedRowElements.splice(startIndex, removeCount);
+
+      for (const rowElement of removed) {
+        this.clearRow(rowElement);
+      }
+    }
+
+    sw.report();
+  }
+
+  private getRenderRowRange(): { start: number; end: number } {
+    const visibleRange = this.getVisibleRowRange();
+    const buffer = 5; /// Should be an option
+
+    const start = Math.max(0, visibleRange.start - buffer);
+    const end = Math.min(this._data.length, visibleRange.end + buffer);
+
+    return { start, end };
   }
 
   private getVisibleRowRange(): { start: number; end: number } {
-    if (!this._contentRoot) {
-      return { start: 0, end: 0 };
+    const element = this.scrollRoot();
+
+    const scrollTop = element.scrollTop;
+    const clientHeight = element.clientHeight;
+    const rowHeight = this.options.rowHeight;
+
+    const start = Math.floor(scrollTop / rowHeight);
+    const end = Math.min(this._data.length, start + Math.ceil(clientHeight / rowHeight));
+
+    return { start, end };
+  }
+
+  private clearRow(rowElement: HTMLTableRowElement): void {
+    for (let i = 0; i < rowElement.children.length; i++) {
+      const td = rowElement.children[i] as HTMLTableCellElement;
+      td.textContent = '\u00A0';
     }
 
-    const scrollTop = this._contentRoot.scrollTop;
-    const clientHeight = this._contentRoot.clientHeight;
-    const rowHeight = this.options.rowHeight || 30;
+    rowElement.classList.remove('tg-hydrated');
+    rowElement.classList.add('tg-dry');
   }
 
   private hydrateRow(rowData: T, rowElement: HTMLTableRowElement): void {
@@ -120,5 +196,8 @@ export class GridVirtualContent<T extends object> extends GridContent<T> {
         field: 'TODO',
       });
     }
+
+    rowElement.classList.remove('tg-dry');
+    rowElement.classList.add('tg-hydrated');
   }
 }
