@@ -4,6 +4,7 @@ export type HtmlElementArgs = {
   class?: string | string[];
   styles?: Record<string, string>;
   data?: Record<string, string>;
+  attributes?: Record<string, string>;
 } & OneOf<
   {
     text?: string;
@@ -49,6 +50,12 @@ export function applyHtmlElementDefaults(args: HtmlElementArgs | undefined, el: 
   if (args.styles) {
     for (const [key, value] of Object.entries(args.styles)) {
       el.style.setProperty(key, value);
+    }
+  }
+
+  if (args.attributes) {
+    for (const [key, value] of Object.entries(args.attributes)) {
+      el.setAttribute(key, value);
     }
   }
 }

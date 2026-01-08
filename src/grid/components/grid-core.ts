@@ -33,6 +33,7 @@ export class GridCore<T extends object> extends GridComponent<T> {
       children: [
         (this._contentTableElement = table({
           class: 'tg-table',
+          attributes: { role: 'grid', width: '1px' },
         })),
       ],
       styles: {
