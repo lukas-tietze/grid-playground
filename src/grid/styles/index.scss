@@ -2,7 +2,7 @@
 
 $border-color: silver;
 
-$border: 1px solid $border-color;
+$border: 2px solid $border-color;
 $cell-padding-x: 10px;
 $cell-padding-y: 5px;
 $cell-padding: $cell-padding-x $cell-padding-x;
@@ -21,27 +21,24 @@ div.tg-wrapper {
   overflow: auto;
   border: $border;
 
-  > table {
-    border-collapse: collapse;
-    border: $border;
-  }
+  box-sizing: border-box;
 }
 
 table.tg-table {
   table-layout: fixed;
+  border-collapse: collapse;
+  border: $border;
 }
 
 tr.tg-header-row {
   position: sticky;
-  top: 0;
+  top: -1px;
   box-shadow: $border-color 0px 3px 3px 0px;
-}
-
-tr.tg-header-row {
   background: white;
 
   > th {
     text-align: left;
+    background: white;
 
     border: $border;
     padding: $cell-padding;
