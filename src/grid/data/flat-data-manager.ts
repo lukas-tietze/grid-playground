@@ -82,7 +82,9 @@ export class FlatDataManager<T extends object> extends DataManager<T> {
       return data;
     }
 
-    return data.sort((a, b) => {
+    const sw = new StopWatch(`Ordering data (${data.length} items)`);
+
+    const ordered = data.sort((a, b) => {
       let res = 0;
 
       for (const ordering of orderings) {
@@ -105,5 +107,9 @@ export class FlatDataManager<T extends object> extends DataManager<T> {
 
       return res;
     });
+
+    sw.report();
+
+    return ordered;
   }
 }

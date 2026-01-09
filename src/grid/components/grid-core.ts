@@ -1,7 +1,7 @@
 import './grid-core.scss';
 
 import { GridComponent } from '../grid-component';
-import { GridState } from '../grid-data';
+import { GridState } from '../grid-state';
 import { div, table } from '../util/html-elements';
 import { GridContent } from './grid-content';
 import { GridContentColGroup } from './grid-content-col-group';
@@ -39,7 +39,6 @@ export class GridCore<T extends object> extends GridComponent<T> {
       children: [
         (this._contentTableElement = table({
           class: 'tg-table',
-          attributes: { role: 'grid', width: '1px' },
         })),
       ],
       styles: {
@@ -51,5 +50,10 @@ export class GridCore<T extends object> extends GridComponent<T> {
     this._colGroup.render(this._contentTableElement);
     this._header.render(this._contentTableElement);
     this._content.render(this._contentTableElement);
+
+    this.internals.gridComponentAccessor = {
+      getRootElement: () => this._root,
+      getColumnHeaderElement: (colId) => this._header.getColumnHeaderElement(colId),
+    };
   }
 }

@@ -1,5 +1,5 @@
 import { debounceTime, fromEvent, merge, takeUntil, tap } from 'rxjs';
-import { GridState } from '../grid-data';
+import { GridState } from '../grid-state';
 import { tbody, tr } from '../util/html-elements';
 import { GridContent } from './grid-content';
 import { StopWatch } from '../util';
@@ -52,14 +52,6 @@ export class GridFullVirtualContent<T extends object> extends GridContent<T> {
 
     const renderRange = this.getRenderRowRange();
     const sw = new StopWatch(`grid virtual content updating view for rows: ${renderRange.start} - ${renderRange.end}`);
-
-    if (renderRange.start === this._view.rowStart && renderRange.end === this._view.rowEnd) {
-      console.log('No changes in render range, skipping view update');
-
-      sw.report();
-
-      return;
-    }
 
     this._view.rows.forEach((row) => clearRow(row));
 

@@ -1,5 +1,5 @@
 import { debounceTime, fromEvent, startWith, Subscription, takeUntil, tap } from 'rxjs';
-import { GridState } from '../grid-data';
+import { GridState } from '../grid-state';
 import { tbody, td, tr } from '../util/html-elements';
 import { GridContent } from './grid-content';
 import { StopWatch } from '../util';

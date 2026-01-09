@@ -61,7 +61,7 @@ const options: GridOptions<DataSource> = {
   virtualization: true,
 };
 
-const data: DataSource[] = new Array(1_000_000).fill(0).map(
+const data: DataSource[] = new Array(1_000).fill(0).map(
   (_, i) =>
     new DataSource({
       id: i,

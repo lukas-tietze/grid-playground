@@ -127,3 +127,65 @@ export function div(args?: DivElementArgs): HTMLDivElement {
 
   return el;
 }
+
+export type InputElementArgs = HtmlElementArgs & {
+  type?: string;
+  value?: string;
+  id?: string;
+  name?: string;
+};
+
+export function input(args?: InputElementArgs): HTMLInputElement {
+  const el = document.createElement('input');
+
+  applyHtmlElementDefaults(args, el);
+
+  if (args?.type) {
+    el.type = args.type;
+  }
+
+  if (args?.value) {
+    el.value = args.value;
+  }
+
+  if (args?.id) {
+    el.id = args.id;
+  }
+
+  if (args?.name) {
+    el.name = args.name;
+  }
+
+  return el;
+}
+
+export type ButtonElementArgs = HtmlElementArgs & {
+  type?: 'button' | 'submit' | 'reset';
+  name?: string;
+  value?: string;
+  id?: string;
+};
+
+export function button(args?: ButtonElementArgs): HTMLButtonElement {
+  const el = document.createElement('button');
+
+  applyHtmlElementDefaults(args, el);
+
+  if (args?.type) {
+    el.type = args.type;
+  }
+
+  if (args?.name) {
+    el.name = args.name;
+  }
+
+  if (args?.value) {
+    el.value = args.value;
+  }
+
+  if (args?.id) {
+    el.id = args.id;
+  }
+
+  return el;
+}

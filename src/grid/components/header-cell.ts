@@ -1,11 +1,12 @@
 import './header-cell.scss';
 
-import { finalize, fromEvent, map, merge, Subscription, switchMap, take, takeUntil } from 'rxjs';
+import { filter, finalize, fromEvent, map, merge, Subscription, switchMap, take, takeUntil, tap } from 'rxjs';
 import { GridComponent } from '../grid-component';
-import { GridState } from '../grid-data';
+import { GridState } from '../grid-state';
 import { ColumnId } from '../options';
-import { div, th } from '../util';
+import { button, div, th } from '../util';
 import { Filter, Ordering } from '../data/query';
+import { ColumnMenu } from './column-menu';
 
 export class HeaderCell<T extends object> extends GridComponent<T> {
   private _element?: HTMLTableCellElement;
@@ -15,6 +16,8 @@ export class HeaderCell<T extends object> extends GridComponent<T> {
   private _ordering: Ordering | undefined;
 
   private _filter: Filter | undefined;
+
+  private _columnMenu?: ColumnMenu<T>;
 
   constructor(state: GridState<T>, colId: ColumnId) {
     super(state);
@@ -30,24 +33,38 @@ export class HeaderCell<T extends object> extends GridComponent<T> {
     return this._filter;
   }
 
+  public get element(): HTMLTableCellElement {
+    if (!this._element) {
+      throw new Error('HeaderCell element not rendered yet.');
+    }
+
+    return this._element;
+  }
+
+  public get colId(): ColumnId {
+    return this._colId;
+  }
+
   public render(parent: HTMLTableRowElement) {
     const col = this.internals.getColumnById(this._colId);
 
     const textElement = div({ class: 'tg-column-title' });
     const orderingStateElement = div({ class: ['tg-column-state', 'tg-column-state-ordering'] });
     const filterStateElement = div({ class: ['tg-column-state', 'tg-column-state-filter'] });
-    const resizeHandleElement = div({ class: 'tg-column-resize-handle' });
+    const resizeHandleElement = div({ class: ['tg-column-resize-handle'] });
+    const columnMenuButton = button({ class: ['tg-column-menu-button'] });
 
     const element = (this._element = th({
       children: [
         div({
-          children: [textElement, orderingStateElement, filterStateElement, resizeHandleElement],
+          children: [textElement, columnMenuButton, orderingStateElement, filterStateElement, resizeHandleElement],
         }),
       ],
       class: 'tg-column-header',
     }));
 
     this.bindResize(resizeHandleElement);
+    this.bindColumnMenu(columnMenuButton);
 
     const textSub = col.options.headerText$.subscribe((text) =>
       col.options.headerRenderer(textElement, text, { dataType: col.options.dataType })
@@ -85,30 +102,60 @@ export class HeaderCell<T extends object> extends GridComponent<T> {
     parent.appendChild(this._element);
   }
 
+  public override dispose(): void {
+    super.dispose();
+
+    this._columnMenu?.dispose();
+    this._element?.remove();
+  }
+
+  private bindColumnMenu(columnMenuButton: HTMLButtonElement) {
+    fromEvent<MouseEvent>(columnMenuButton, 'click')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((ev) => {
+        ev.stopPropagation();
+
+        if (!this._columnMenu) {
+          this._columnMenu = new ColumnMenu(this.internals);
+
+          this._columnMenu.render(this._colId);
+        }
+      });
+
+    merge(this.internals.columnMenuOpened$.pipe(filter((colId) => colId !== this._colId)), this.internals.columnMenuClosed$)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this._columnMenu?.dispose();
+        this._columnMenu = undefined;
+      });
+  }
+
   private bindResize(element: HTMLElement) {
-    fromEvent<MouseEvent>(element, 'mousedown', { passive: true })
+    fromEvent<MouseEvent>(element, 'mousedown')
       .pipe(
         switchMap((ev: MouseEvent) => {
           ev.preventDefault();
+          ev.stopPropagation();
 
           const startX = ev.clientX;
           const startWidth = this.internals.getColumnById(this._colId).width;
-          const rootElement = this.internals.gridComponent.getRootElement();
+          const rootElement = this.internals.gridComponentAccessor.getRootElement();
 
           rootElement.classList.add('tg-column-resizing');
 
           const cancel$ = merge(
-            fromEvent<MouseEvent>(document, 'mouseup', { passive: true }),
-            fromEvent<MouseEvent>(document, 'mouseleave', { passive: true }),
+            fromEvent<MouseEvent>(document, 'mouseup').pipe(tap((ev) => ev.stopPropagation())),
+            fromEvent<MouseEvent>(document, 'mouseleave').pipe(tap((ev) => ev.stopPropagation())),
             this.destroy$
           ).pipe(
             take(1),
             finalize(() => rootElement.classList.remove('tg-column-resizing'))
           );
 
-          return fromEvent<MouseEvent>(document, 'mousemove', { passive: true }).pipe(
+          return fromEvent<MouseEvent>(document, 'mousemove').pipe(
             map((moveEv) => {
               moveEv.preventDefault();
+              moveEv.stopPropagation();
 
               const deltaX = moveEv.clientX - startX;
 

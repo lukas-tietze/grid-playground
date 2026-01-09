@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 import { Component } from './component';
 import { Grid } from './grid';
-import { GridState } from './grid-data';
+import { GridState } from './grid-state';
 import { NormalizedGridOptions } from './options';
 import { DataManager } from './data/data-manager';
 
@@ -11,7 +11,7 @@ export class GridComponent<T extends object> extends Component {
 
     this.internals = internals;
     this.options = internals.options;
-    this.root = internals.gridComponent;
+    this.root = internals.grid;
     this.data = internals.dataManager;
   }
 

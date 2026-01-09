@@ -2,11 +2,10 @@ import './styles/index.scss';
 
 import { GridCore } from './components/grid-core';
 import { GridOptions, normalizeGridOptions } from './options';
-import { GridState } from './grid-data';
+import { GridState } from './grid-state';
 import { QueryManager } from './querying/query-manager';
 import { Observable } from 'rxjs';
 import { FlatDataManager } from './data/flat-data-manager';
-import { ColumnData } from './column-data';
 
 export class Grid<T extends object> {
   private _options: GridOptions<T>;
@@ -43,22 +42,8 @@ export class Grid<T extends object> {
     }
   }
 
-  public getRootElement(): HTMLElement {
-    if (!this._core) {
-      throw new Error('Grid not attached yet.');
-    }
-
-    return this._core?.rootElement;
-  }
-
   public attachTo(element: HTMLElement) {
     element.replaceChildren();
-
-    // element.attachShadow({ mode: 'open' });
-
-    // if (!element.shadowRoot) {
-    //   throw new Error('Shadow root not created');
-    // }
 
     this._core = new GridCore(element, this._internals);
 

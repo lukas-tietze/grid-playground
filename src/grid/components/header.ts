@@ -1,6 +1,6 @@
 import { GridComponent } from '../grid-component';
 import { table, thead, tr } from '../util/html-elements';
-import { GridState } from '../grid-data';
+import { GridState } from '../grid-state';
 import { HeaderCell } from './header-cell';
 
 export class GridHeader<T extends object> extends GridComponent<T> {
@@ -40,5 +40,15 @@ export class GridHeader<T extends object> extends GridComponent<T> {
     });
 
     root.appendChild(this.element);
+  }
+
+  public getColumnHeaderElement(colId: string): HTMLElement {
+    const headerCell = this.headerCells.find((hc) => hc.colId === colId);
+
+    if (!headerCell) {
+      throw new Error(`HeaderCell for column with id "${colId}" not found`);
+    }
+
+    return headerCell.element;
   }
 }

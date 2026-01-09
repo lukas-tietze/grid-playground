@@ -9,6 +9,7 @@ tr.tg-header-row {
   > th {
     text-align: left;
     background: white;
+    padding: 0;
 
     border: options.$border;
     height: options.$row-height;
@@ -60,5 +61,24 @@ tr.tg-header-row {
 
     &.tg-filtered > div > .tg-column-state.tg-column-state-filter {
     }
+
+    .tg-column-menu-button {
+      display: none;
+    }
+
+    &:hover .tg-column-menu-button {
+      display: block;
+    }
   }
+}
+
+.tg-column-menu-button {
+  width: 21px;
+  height: 21px;
+  background: options.$bg-color;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8Y2lyY2xlIGN4PSI1IiBjeT0iMTIiIHI9IjIiIGZpbGw9ImN1cnJlbnRDb2xvciIvPgogIDxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjIiIGZpbGw9ImN1cnJlbnRDb2xvciIvPgogIDxjaXJjbGUgY3g9IjE5IiBjeT0iMTIiIHI9IjIiIGZpbGw9ImN1cnJlbnRDb2xvciIvPgo8L3N2Zz4K");
+  background-position: center;
+  background-size: contain;
+  border: options.$border;
+  border-radius: 50%;
 }

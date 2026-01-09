@@ -1,5 +1,5 @@
 import { ro } from '@faker-js/faker';
-import { GridState } from '../grid-data';
+import { GridState } from '../grid-state';
 import { ColumnOptions, NormalizedColumnOptions } from '../options';
 import { td, tr } from '../util';
 import { VirtualCellState, VirtualRowState } from './types';
