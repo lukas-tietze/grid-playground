@@ -1,0 +1,22 @@
+@use "./options";
+
+tr.tg-content-row {
+  > td.tg-cell {
+    background-color: options.$bg-color;
+    color: options.$fg-color;
+
+    border: options.$border;
+    padding: options.$cell-padding;
+    height: options.$row-height;
+    line-height: options.$row-line-height;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  &:hover > td.tg-cell {
+    background-color: options.$bg-color-hover;
+    color: options.$fg-color-hover;
+  }
+}

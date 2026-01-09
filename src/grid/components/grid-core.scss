@@ -1,0 +1,15 @@
+@use "./options";
+
+div.tg-wrapper {
+  max-height: options.$grid-height;
+  overflow: auto;
+  border: options.$border;
+
+  box-sizing: border-box;
+}
+
+table.tg-table {
+  table-layout: fixed;
+  border-collapse: collapse;
+  border: options.$border;
+}

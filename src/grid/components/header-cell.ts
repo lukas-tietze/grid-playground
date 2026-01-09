@@ -1,3 +1,5 @@
+import './header-cell.scss';
+
 import { fromEvent, map, Subscription } from 'rxjs';
 import { GridComponent } from '../grid-component';
 import { GridState } from '../grid-data';

@@ -1,0 +1,15 @@
+$border-color: silver;
+
+$border: 2px solid $border-color;
+$cell-padding-x: 10px;
+$cell-padding-y: 5px;
+$cell-padding: $cell-padding-x $cell-padding-x;
+$row-height: var(--tg-row-height);
+$row-line-height: $row-height - $cell-padding-y;
+
+$grid-height: 450px;
+
+$bg-color: white;
+$bg-color-hover: wheat;
+$fg-color: black;
+$fg-color-hover: black;

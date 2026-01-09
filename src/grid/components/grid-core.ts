@@ -1,3 +1,5 @@
+import './grid-core.scss';
+
 import { GridComponent } from '../grid-component';
 import { GridState } from '../grid-data';
 import { div, table } from '../util/html-elements';
