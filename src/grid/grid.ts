@@ -43,6 +43,14 @@ export class Grid<T extends object> {
     }
   }
 
+  public getRootElement(): HTMLElement {
+    if (!this._core) {
+      throw new Error('Grid not attached yet.');
+    }
+
+    return this._core?.rootElement;
+  }
+
   public attachTo(element: HTMLElement) {
     element.replaceChildren();
 
@@ -53,6 +61,7 @@ export class Grid<T extends object> {
     // }
 
     this._core = new GridCore(element, this._internals);
+
     this._core.render();
   }
 }

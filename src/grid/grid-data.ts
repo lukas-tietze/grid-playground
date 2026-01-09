@@ -17,7 +17,7 @@ export class GridState<T extends object> {
   constructor(init: GridStateInit<T>) {
     this.options = init.options;
     this.dataManager = init.dataManager;
-    this.root = init.root;
+    this.gridComponent = init.root;
     this.queryManager = init.queryManager;
     this.cols = init.options.columns.map((c) => new ColumnData(c));
     this._columnsById = new Map(this.cols.map((col) => [col.options.id, col]));
@@ -25,7 +25,7 @@ export class GridState<T extends object> {
 
   public readonly options: NormalizedGridOptions<T>;
   public readonly dataManager: DataManager<T>;
-  public readonly root: Grid<T>;
+  public readonly gridComponent: Grid<T>;
   public readonly queryManager: QueryManager;
   public readonly cols: ColumnData<T>[];
 
@@ -38,4 +38,5 @@ export class GridState<T extends object> {
 
     return res;
   }
+
 }

@@ -8,6 +8,10 @@ div.tg-wrapper {
   box-sizing: border-box;
 }
 
+.tg-column-resizing {
+  user-select: none;
+}
+
 table.tg-table {
   table-layout: fixed;
   border-collapse: collapse;

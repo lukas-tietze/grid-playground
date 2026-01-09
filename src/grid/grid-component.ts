@@ -11,7 +11,7 @@ export class GridComponent<T extends object> extends Component {
 
     this.internals = internals;
     this.options = internals.options;
-    this.root = internals.root;
+    this.root = internals.gridComponent;
     this.data = internals.dataManager;
   }
 

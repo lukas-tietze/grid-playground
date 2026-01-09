@@ -1,6 +1,6 @@
 import './header-cell.scss';
 
-import { fromEvent, map, Subscription } from 'rxjs';
+import { finalize, fromEvent, map, merge, Subscription, switchMap, take, takeUntil } from 'rxjs';
 import { GridComponent } from '../grid-component';
 import { GridState } from '../grid-data';
 import { ColumnId } from '../options';
@@ -36,17 +36,18 @@ export class HeaderCell<T extends object> extends GridComponent<T> {
     const textElement = div({ class: 'tg-column-title' });
     const orderingStateElement = div({ class: ['tg-column-state', 'tg-column-state-ordering'] });
     const filterStateElement = div({ class: ['tg-column-state', 'tg-column-state-filter'] });
+    const resizeHandleElement = div({ class: 'tg-column-resize-handle' });
 
     const element = (this._element = th({
       children: [
         div({
-          children: [textElement, orderingStateElement, filterStateElement],
+          children: [textElement, orderingStateElement, filterStateElement, resizeHandleElement],
         }),
       ],
       class: 'tg-column-header',
     }));
 
-    const widthSub = col.width$.subscribe((width) => (element.style.width = `${width}px`));
+    this.bindResize(resizeHandleElement);
 
     const textSub = col.options.headerText$.subscribe((text) =>
       col.options.headerRenderer(textElement, text, { dataType: col.options.dataType })
@@ -80,9 +81,44 @@ export class HeaderCell<T extends object> extends GridComponent<T> {
     sub.add(textSub);
     sub.add(clickSub);
     sub.add(stateSub);
-    sub.add(widthSub);
 
     parent.appendChild(this._element);
+  }
+
+  private bindResize(element: HTMLElement) {
+    fromEvent<MouseEvent>(element, 'mousedown', { passive: true })
+      .pipe(
+        switchMap((ev: MouseEvent) => {
+          ev.preventDefault();
+
+          const startX = ev.clientX;
+          const startWidth = this.internals.getColumnById(this._colId).width;
+          const rootElement = this.internals.gridComponent.getRootElement();
+
+          rootElement.classList.add('tg-column-resizing');
+
+          const cancel$ = merge(
+            fromEvent<MouseEvent>(document, 'mouseup', { passive: true }),
+            fromEvent<MouseEvent>(document, 'mouseleave', { passive: true }),
+            this.destroy$
+          ).pipe(
+            take(1),
+            finalize(() => rootElement.classList.remove('tg-column-resizing'))
+          );
+
+          return fromEvent<MouseEvent>(document, 'mousemove', { passive: true }).pipe(
+            map((moveEv) => {
+              moveEv.preventDefault();
+
+              const deltaX = moveEv.clientX - startX;
+
+              return Math.max(50, startWidth + deltaX);
+            }),
+            takeUntil(cancel$)
+          );
+        })
+      )
+      .subscribe((newWidth) => (this.internals.getColumnById(this._colId).width = newWidth));
   }
 
   private setColumnState() {

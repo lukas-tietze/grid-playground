@@ -11,7 +11,7 @@ import { GridVirtualRowContent } from './grid-virtual-row-content';
 import { GridHeader } from './header';
 
 export class GridCore<T extends object> extends GridComponent<T> {
-  private _root: ShadowRoot | HTMLElement;
+  private _root: HTMLElement;
 
   private _header: GridHeader<T>;
   private _content: GridContent<T>;
@@ -20,13 +20,17 @@ export class GridCore<T extends object> extends GridComponent<T> {
 
   private _element?: HTMLDivElement;
 
-  constructor(root: ShadowRoot | HTMLElement, internals: GridState<T>) {
+  constructor(root: HTMLElement, internals: GridState<T>) {
     super(internals);
 
     this._root = root;
     this._header = new GridHeader(this.internals);
     this._content = this.options.virtualization.enabled ? new GridFullVirtualContent(this.internals) : new GridFlatContent(this.internals);
     this._colGroup = new GridContentColGroup(this.internals);
+  }
+
+  public get rootElement(): HTMLElement {
+    return this._root;
   }
 
   public render(): void {
